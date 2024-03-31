@@ -1,3 +1,6 @@
+import fs from "fs/promises";
+import path from "path";
+
 function HomePage(props) {
   return (
     <ul>
@@ -10,17 +13,16 @@ function HomePage(props) {
 
 // This function gets called at build time
 export async function getStaticProps() {
-  // Call an external API endpoint to get products
+  // process cwd is the current working directory, which is the root of the project
+  const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
+  const jsonData = await fs.readFile(filePath);
+  const data = JSON.parse(jsonData);
 
   // By returning { props: products }, the HomePage component
   // will receive `products` as a prop at build time
   return {
     props: {
-      products: [
-        { id: "p1", title: "Product 1" },
-        { id: "p2", title: "Product 2" },
-        { id: "p3", title: "Product 3" },
-      ],
+      products: data.products,
     },
   };
 }
