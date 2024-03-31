@@ -6,9 +6,9 @@ function ProductDetailPage(props) {
   const { loadedProduct } = props;
 
   // This is not necessary because of the fallback: 'blocking' in getStaticPaths
-  // if (!loadedProduct) {
-  //   return <p>Loading...</p>;
-  // }
+  if (!loadedProduct) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <Fragment>
@@ -33,6 +33,12 @@ export async function getStaticProps(context) {
   const data = await getData();
 
   const product = data.products.find((product) => product.id === productId);
+
+  if (!product) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -64,7 +70,7 @@ export async function getStaticPaths() {
     // - If that's successful, the response will be cached for future requests.
     // - If that's unsuccessful, a 404 page will be rendered.
     // 'blocking' allows the page to be generated at request time instead of build time.
-    fallback: "blocking",
+    fallback: true,
   };
 }
 
