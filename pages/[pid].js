@@ -18,15 +18,19 @@ function ProductDetailPage(props) {
   );
 }
 
+async function getData() {
+  const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
+  const jsonData = await fs.readFile(filePath);
+  return JSON.parse(jsonData);
+}
+
 export async function getStaticProps(context) {
   // params contains the route parameters for pages using dynamic routes.
   const { params } = context;
 
   const productId = params.pid;
 
-  const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
-  const jsonData = await fs.readFile(filePath);
-  const data = JSON.parse(jsonData);
+  const data = await getData();
 
   const product = data.products.find((product) => product.id === productId);
 
@@ -40,8 +44,13 @@ export async function getStaticProps(context) {
 // This function gets called at build time
 // getStaticPaths is required for dynamic routes using getStaticProps
 export async function getStaticPaths() {
+  const data = await getData();
+
+  const ids = data.products.map((product) => product.id);
+  const pathsWithParams = ids.map((id) => ({ params: { pid: id } }));
+
   return {
-    paths: [{ params: { pid: "p1" } }],
+    paths: pathsWithParams,
     // If fallback is false, then any paths not returned by getStaticPaths will result in a 404 page.
     // If fallback is true, then the behavior of getStaticProps changes:
     // - The paths returned from getStaticPaths will be rendered to HTML at build time.
@@ -55,7 +64,7 @@ export async function getStaticPaths() {
     // - If that's successful, the response will be cached for future requests.
     // - If that's unsuccessful, a 404 page will be rendered.
     // 'blocking' allows the page to be generated at request time instead of build time.
-    fallback: 'blocking',
+    fallback: "blocking",
   };
 }
 
