@@ -13,6 +13,7 @@ function HomePage(props) {
 
 // This function gets called at build time
 export async function getStaticProps() {
+  console.log('Re-generating...');
   // process cwd is the current working directory, which is the root of the project
   const filePath = path.join(process.cwd(), "data", "dummy-backend.json");
   const jsonData = await fs.readFile(filePath);
@@ -24,6 +25,8 @@ export async function getStaticProps() {
     props: {
       products: data.products,
     },
+    // Re-generate the page at most once per second
+    revalidate: 10,
   };
 }
 
