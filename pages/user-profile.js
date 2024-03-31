@@ -12,8 +12,7 @@ export async function getServerSideProps(context) {
   // remember that those are from node
   const { params, req, res } = context;
 
-  console.log(req);
-  console.log(res);
+  console.log('Server side code');
 
   return {
     props: {
